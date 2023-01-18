@@ -1,5 +1,6 @@
 package africa.semicolon.Unicoin.registration;
 
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ public class RegistrationController {
     RegistrationService registrationService;
 
     @PostMapping("/register")
-    public String register(@RequestBody RegistrationRequest registrationRequest) {
+    public String register(@RequestBody RegistrationRequest registrationRequest) throws MessagingException {
         return registrationService.register(registrationRequest);
     }
 }
