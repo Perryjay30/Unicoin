@@ -1,15 +1,19 @@
 package africa.semicolon.Unicoin.registration;
 
 import africa.semicolon.Unicoin.email.EmailSender;
+import africa.semicolon.Unicoin.registration.dtos.ConfirmTokenRequest;
+import africa.semicolon.Unicoin.registration.dtos.RegistrationRequest;
+import africa.semicolon.Unicoin.registration.token.ConfirmationToken;
+import africa.semicolon.Unicoin.registration.token.ConfirmationTokenService;
 import africa.semicolon.Unicoin.user.User;
 import africa.semicolon.Unicoin.user.UserRepository;
 import africa.semicolon.Unicoin.user.UserRole;
 import africa.semicolon.Unicoin.user.UserService;
 import jakarta.mail.MessagingException;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class RegistrationService {
@@ -22,6 +26,9 @@ public class RegistrationService {
 
     @Autowired
     private EmailSender emailSender;
+
+    @Autowired
+    private ConfirmationTokenService confirmationTokenService;
     public String register(RegistrationRequest registrationRequest) throws MessagingException {
         boolean emailExists = userRepository.findByEmailAddressIgnoreCase
                 (registrationRequest.getEmailAddress()).isPresent();
@@ -38,6 +45,23 @@ public class RegistrationService {
         emailSender.send(registrationRequest.getEmailAddress(), buildEmail(registrationRequest.getEmailAddress(), token));
         return token;
     }
+
+
+
+    public String confirmToken(ConfirmTokenRequest confirmTokenRequest) {
+        ConfirmationToken token = confirmationTokenService.getConfirmationToken(confirmTokenRequest.getToken())
+                .orElseThrow(() -> new IllegalStateException("Token does not exists"));
+
+        if(token.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Token is expired");
+        }
+
+        confirmationTokenService.setConfirmedAt(token.getToken());
+        userService.enableUser(confirmTokenRequest.getEmailAddress());
+        return "confirmed";
+    }
+
+
 
     public String buildEmail(String name, String link) {
 

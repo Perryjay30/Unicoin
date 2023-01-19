@@ -14,7 +14,7 @@ public class DeleteExpiredTokenScheduler {
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 47 15 * * *")
     public void deleteExpiredToken() {
         confirmationTokenService.deleteExpiredToken();
     }

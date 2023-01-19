@@ -2,6 +2,8 @@ package africa.semicolon.Unicoin.registration.token;
 
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -13,4 +15,11 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     @Transactional
     void deleteConfirmationTokenByExpiredAtBefore(LocalDateTime currentTime);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE ConfirmationToken confirmationToken " +
+            "SET confirmationToken.confirmedAt = ?1 " +
+            "WHERE confirmationToken.token = ?2 ")
+    void setConfirmedAt(LocalDateTime now, String confirmationToken);
 }

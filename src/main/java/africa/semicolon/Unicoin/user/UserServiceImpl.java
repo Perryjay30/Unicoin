@@ -1,6 +1,5 @@
 package africa.semicolon.Unicoin.user;
 
-import africa.semicolon.Unicoin.registration.RegistrationRequest;
 import africa.semicolon.Unicoin.registration.token.ConfirmationToken;
 import africa.semicolon.Unicoin.registration.token.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,4 +26,10 @@ public class UserServiceImpl implements UserService {
         confirmationTokenService.savedConfirmationToken(confirmationToken);
         return token;
     }
+
+    @Override
+    public void enableUser(String emailAddress) {
+        userRepository.enable(emailAddress);
+    }
+
 }

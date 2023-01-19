@@ -29,7 +29,7 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    private Boolean isDisabled;
+    private Boolean isDisabled = false;
 
     public User(String emailAddress, String firstName, String lastName, String password, UserRole userRole) {
         this.emailAddress = emailAddress;
